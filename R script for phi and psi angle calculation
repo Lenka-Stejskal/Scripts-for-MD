@@ -1,0 +1,29 @@
+working_Phi_file <- "phi"
+working_Psi_file <- "psi"
+
+#Extracts the amino acid from the file
+aa_residue <-str_sub(working_Phi_file, 4,-5)
+
+#read in the Phi data 
+df_Phi <- read.table(working_Phi_file, header = FALSE, col.names= c("time", "Phi") )
+help("read.table")
+
+#Reads in the Psi data
+df_Psi <- read.table(working_Psi_file, header = FALSE, col.names= c("time", "Psi") )
+
+#Creates a dataframe called df
+#Combines the "df_Phi" dataframe with column called "Psi" in the "df_Psi" dataframe
+df <- mutate(df_Phi, Psi= df_Psi$Psi )
+
+#delete column "time"
+df <- dplyr::select(df, -time)
+
+jpeg(filename = paste(aa_residue,"_Ramachandran.jpeg",sep = ""), 
+     width = 1500, height = 2300, res =300)
+ramachandran(df,
+             main=aa_residue,
+             heatFun="norm",
+             plotType="sparse",
+             xBins=90,yBins=90,
+             printLegend=FALSE)
+dev.off()
